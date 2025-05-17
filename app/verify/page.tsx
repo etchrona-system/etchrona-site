@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import { useState } from 'react';
 
@@ -20,7 +20,24 @@ export default function Verify() {
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
     setHash(hashHex);
-    setStatus('Hash successfully generated.');
+    setStatus('Hash generated successfully.');
+
+    // 發送 POST 請求，寫入 log/verify.json
+    await fetch('/api/save', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        source: 'etchrona-system',
+        type: 'image/placeholder',
+        filename: selectedFile.name,
+        hash: hashHex,
+        translated_log: 'New file hash recorded from /verify.',
+        timestamp: new Date().toISOString(),
+        version: 'v0.2.1'
+      })
+    });
   };
 
   return (
@@ -28,12 +45,12 @@ export default function Verify() {
       <h1>Etchrona /verify Module</h1>
       <p>Please upload an image file to generate a SHA-256 hash.</p>
       <input type="file" onChange={handleFileChange} />
-      <p>{status}</p>
+
+      <p style={{ marginTop: '1rem', fontWeight: 'bold' }}>{status}</p>
       {hash && (
-        <div>
-          <h2>Generated Hash:</h2>
-          <code style={{ wordWrap: 'break-word' }}>{hash}</code>
-        </div>
+        <p>
+          ✅ Generated hash: <code>{hash}</code>
+        </p>
       )}
     </div>
   );
