@@ -8,6 +8,15 @@
     "translated_log": "The system has initiated the first semantic verification node.",
     "timestamp": "2025-05-17T11:21:00Z",
     "version": "v0.2.1"
-  }
+  },
+  {
+  "source": "etchrona-system",
+  "type": "image/placeholder",
+  "filename": "test-demo-image.png",
+  "hash": "abc123testhash456xyz",
+  "translated_log": "This is a demo record for hash result display testing.",
+  "timestamp": "2025-05-17T17:35:00Z",
+  "version": "v0.3.0"
+ }
 
 ]
