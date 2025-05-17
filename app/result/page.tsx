@@ -11,6 +11,11 @@ export default function Result() {
       const res = await fetch('/log/verify.json');
       const data = await res.json();
       const exists = data.some((entry: any) => entry.hash === input);
+      
+      console.log('Fetched data:', data);
+      console.log('Input:', input);
+      console.log('Exists:', exists);
+
       setFound(exists);
     } catch (error) {
       console.error('Failed to fetch log:', error);
