@@ -20,17 +20,18 @@ export default function Verify() {
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
     setHash(hashHex);
-    setStatus('Hash generated successfully.');
+    setStatus('Hash successfully generated.');
   };
 
   return (
     <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h1>Etchrona /verify 模組</h1>
+      <h1>Etchrona /verify Module</h1>
+      <p>Please upload an image file to generate a SHA-256 hash.</p>
       <input type="file" onChange={handleFileChange} />
       <p>{status}</p>
       {hash && (
         <div>
-          <h2>SHA-256 Hash:</h2>
+          <h2>Generated Hash:</h2>
           <code style={{ wordWrap: 'break-word' }}>{hash}</code>
         </div>
       )}
