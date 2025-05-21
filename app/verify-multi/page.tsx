@@ -13,8 +13,7 @@ export default function VerifyMulti() {
 
   const handleNext = () => {
     if (!files || files.length === 0) return alert("Please upload at least one image.");
-    // Save files temporarily to session/localStorage or context if needed
-    router.push("/semantic"); // go to next step
+    router.push("/semantic"); // next page to fill metadata
   };
 
   return (
