@@ -1,5 +1,6 @@
 import Image from "next/image";
 import styles from "./page.module.css";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -13,6 +14,11 @@ export default function Home() {
           height={38}
           priority
         />
+        <Link href="/identity">
+          <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">
+           Go to Identity Page
+          </button>
+        </Link>
         <ol>
           <li>
             Get started by editing <code>app/page.tsx</code>.
