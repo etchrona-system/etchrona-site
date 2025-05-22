@@ -1,13 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-// 強制此頁面跳過預先渲染，全部交由客戶端渲染（否則部署時會報錯）
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
+export const dynamic = 'force-dynamic';
 
-export default function IdentityPage() {
+function ClientIdentityLogic() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode");
@@ -39,5 +37,13 @@ export default function IdentityPage() {
       <h1 className="text-xl font-bold mb-3">Creating Your Session ID...</h1>
       <p className="text-sm text-gray-600">Routing mode: {mode}</p>
     </main>
+  );
+}
+
+export default function IdentityPageWrapper() {
+  return (
+    <Suspense fallback={<p className="p-6 text-gray-500">Loading...</p>}>
+      <ClientIdentityLogic />
+    </Suspense>
   );
 }
