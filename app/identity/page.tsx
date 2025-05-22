@@ -3,6 +3,9 @@
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 export default function IdentityPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
