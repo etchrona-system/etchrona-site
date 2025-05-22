@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className={styles.page}>
-      <main className="flex flex-col items-center justify-center min-h-screen p-4 gap-6">
+      <main className={styles.main}>
         <Image
           className={styles.logo}
           src="/next.svg"
@@ -15,26 +15,25 @@ export default function Home() {
           priority
         />
 
-        {/* Buttons container */}
-        <div className="flex flex-col items-center gap-4 mt-8">
+        {/* Action Buttons (spaced out) */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginTop: "20px" }}>
           <Link href="/identity?mode=single">
             <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">
-              Single Image Mode
+              Single Image Verification
             </button>
           </Link>
           <Link href="/identity?mode=multi">
             <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">
-              Multi Image Verification (e.g., different angles, colors)
+              Multi Image Verification
             </button>
           </Link>
           <Link href="/identity?mode=query">
             <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">
-              Query Existing Record
+              Query Verification Record
             </button>
           </Link>
         </div>
 
-        {/* Default Boilerplate Section */}
         <ol>
           <li>Get started by editing <code>app/page.tsx</code>.</li>
           <li>Save and see your changes instantly.</li>
