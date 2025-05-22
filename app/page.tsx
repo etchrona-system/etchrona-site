@@ -5,7 +5,7 @@ import styles from "./page.module.css";
 export default function Home() {
   return (
     <div className={styles.page}>
-      <main className="flex flex-col items-center justify-center min-h-screen p-6">
+      <main className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
         <Image
           className={styles.logo}
           src="/next.svg"
@@ -15,7 +15,9 @@ export default function Home() {
           priority
         />
 
-        <div className="flex flex-col items-center gap-4 mt-10">
+        <h1 className="text-2xl font-bold my-6">Etchrona Verification Portal</h1>
+
+        <div className="flex flex-col items-center gap-4 mt-4">
           <Link href="/verify/single-id">
             <button className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition">
               Single Image Verification
