@@ -14,15 +14,29 @@ export default function Home() {
           height={38}
           priority
         />
-        <Link href="/identity">
-          <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">
-           Go to Identity Page
-          </button>
-        </Link>
+
+        {/* Core Entry Buttons */}
+        <div className="flex flex-col gap-3 mt-6">
+          <Link href="/identity?mode=single">
+            <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">
+              Single Image Verification
+            </button>
+          </Link>
+          <Link href="/identity?mode=multi">
+            <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">
+              Multi Image Verification (e.g., different angles, colors)
+            </button>
+          </Link>
+          <Link href="/identity?mode=query">
+            <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">
+              Query Existing Record
+            </button>
+          </Link>
+        </div>
+
+        {/* Default Boilerplate Section */}
         <ol>
-          <li>
-            Get started by editing <code>app/page.tsx</code>.
-          </li>
+          <li>Get started by editing <code>app/page.tsx</code>.</li>
           <li>Save and see your changes instantly.</li>
         </ol>
 
@@ -42,6 +56,7 @@ export default function Home() {
             />
             Deploy now
           </a>
+
           <a
             href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
             target="_blank"
@@ -52,6 +67,7 @@ export default function Home() {
           </a>
         </div>
       </main>
+
       <footer className={styles.footer}>
         <a
           href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
@@ -67,6 +83,7 @@ export default function Home() {
           />
           Learn
         </a>
+
         <a
           href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
           target="_blank"
@@ -81,6 +98,7 @@ export default function Home() {
           />
           Examples
         </a>
+
         <a
           href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
           target="_blank"
