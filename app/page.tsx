@@ -1,11 +1,11 @@
 import Image from "next/image";
-import styles from "./page.module.css";
 import Link from "next/link";
+import styles from "./page.module.css";
 
 export default function Home() {
   return (
     <div className={styles.page}>
-      <main className={styles.main}>
+      <main className="flex flex-col items-center justify-center min-h-screen p-6">
         <Image
           className={styles.logo}
           src="/next.svg"
@@ -15,104 +15,26 @@ export default function Home() {
           priority
         />
 
-        {/* Action Buttons (spaced out) */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginTop: "20px" }}>
-          <Link href="/identity?mode=single">
-            <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">
+        <div className="flex flex-col items-center gap-4 mt-10">
+          <Link href="/verify/single-id">
+            <button className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition">
               Single Image Verification
             </button>
           </Link>
-          <Link href="/identity?mode=multi">
-            <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">
+
+          <Link href="/verify/multi-id">
+            <button className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition">
               Multi Image Verification
             </button>
           </Link>
+
           <Link href="/result">
-            <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">
+            <button className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition">
               Query Verification Record
             </button>
           </Link>
         </div>
-
-        <ol>
-          <li>Get started by editing <code>app/page.tsx</code>.</li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
