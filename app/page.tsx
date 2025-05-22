@@ -27,7 +27,7 @@ export default function Home() {
               Multi Image Verification
             </button>
           </Link>
-          <Link href="/identity?mode=query">
+          <Link href="/result">
             <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">
               Query Verification Record
             </button>
