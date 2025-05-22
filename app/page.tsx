@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className={styles.page}>
-      <main className={styles.main}>
+      <main className="flex flex-col items-center justify-center min-h-screen p-4 gap-6">
         <Image
           className={styles.logo}
           src="/next.svg"
@@ -15,11 +15,11 @@ export default function Home() {
           priority
         />
 
-        {/* Core Entry Buttons */}
-        <div className="flex flex-col gap-3 mt-6">
+        {/* Buttons container */}
+        <div className="flex flex-col items-center gap-4 mt-8">
           <Link href="/identity?mode=single">
             <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">
-              Single Image Verification
+              Single Image Mode
             </button>
           </Link>
           <Link href="/identity?mode=multi">
