@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+// 強制此頁面跳過預先渲染，全部交由客戶端渲染（否則部署時會報錯）
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
