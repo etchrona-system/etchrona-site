@@ -1,39 +1,115 @@
-// ✅ 第一步：建立 verify/single-id/page.tsx
-
 "use client";
+import React, { useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+export default function SingleImagePage() {
+  const [file, setFile] = useState<File | null>(null);
+  const [hash, setHash] = useState("");
+  const [originalFilename, setOriginalFilename] = useState("");
+  const [customFilename, setCustomFilename] = useState("");
+  const [purpose, setPurpose] = useState("");
+  const [method, setMethod] = useState("");
+  const [authCode, setAuthCode] = useState("");
+  const [timestamp, setTimestamp] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
-export default function SingleIDPage() {
-  const [nickname, setNickname] = useState("");
-  const router = useRouter();
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files;
+    if (!fileList || fileList.length === 0) return;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!nickname.trim()) return;
-    localStorage.setItem("etchrona-nickname", nickname);
-    router.push("/verify");
+    const selectedFile = fileList[0];
+    setFile(selectedFile);
+    setOriginalFilename(selectedFile.name);
+
+    const buffer = await selectedFile.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+    setHash(hashHex);
+  };
+
+  const handleSubmit = () => {
+    if (!hash || !authCode) {
+      alert("Please upload an image and enter an authorization code.");
+      return;
+    }
+    const confirm = window.confirm(
+      "You are about to seal the semantic record and authorization code. Once submitted, it cannot be modified and is only for future verification. Continue?"
+    );
+    if (!confirm) return;
+    const now = new Date().toISOString();
+    setTimestamp(now);
+    setSubmitted(true);
+    console.log({
+      hash,
+      originalFilename,
+      customFilename,
+      purpose,
+      method,
+      authCode,
+      timestamp: now,
+    });
   };
 
   return (
-    <main className="flex flex-col items-center justify-start min-h-screen pt-20 px-4">
-      <h1 className="text-2xl font-bold mb-4">Enter Your ID (Single Image)</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col items-center">
-        <input
-          type="text"
-          placeholder="Enter your ID or nickname"
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)}
-          className="border border-gray-300 rounded px-4 py-2 mb-4"
-        />
-        <button
-          type="submit"
-          className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800 transition"
-        >
-          Continue
-        </button>
-      </form>
-    </main>
+    <div className="max-w-2xl mx-auto p-4 space-y-4">
+      <h2 className="text-xl font-bold">Etchrona - Single Image Semantic Sealing</h2>
+
+      <input type="file" accept="image/*" onChange={handleFileChange} />
+      {hash && (
+        <div className="bg-gray-100 p-2 rounded">
+          <p><strong>Original Filename:</strong> {originalFilename}</p>
+          <p><strong>SHA-256 Hash:</strong> {hash}</p>
+        </div>
+      )}
+
+      <input
+        type="text"
+        placeholder="Custom Filename (optional)"
+        className="w-full border p-2 rounded"
+        value={customFilename}
+        onChange={(e) => setCustomFilename(e.target.value)}
+      />
+
+      <textarea
+        placeholder="Usage Purpose (informative only, not legally binding)"
+        className="w-full border p-2 rounded"
+        value={purpose}
+        onChange={(e) => setPurpose(e.target.value)}
+      />
+
+      <textarea
+        placeholder="Creation Method / Process Description (e.g., tool used, AI generation, etc.)"
+        className="w-full border p-2 rounded"
+        value={method}
+        onChange={(e) => setMethod(e.target.value)}
+        maxLength={1000}
+      />
+
+      <input
+        type="text"
+        placeholder="Authorization Code (required for semantic access)"
+        className="w-full border p-2 rounded"
+        value={authCode}
+        onChange={(e) => setAuthCode(e.target.value)}
+      />
+
+      <button
+        className="bg-blue-600 text-white px-4 py-2 rounded"
+        onClick={handleSubmit}
+      >
+        Confirm and Submit
+      </button>
+
+      {submitted && (
+        <div className="mt-4 p-4 bg-green-100 border border-green-400 rounded">
+          <p>✅ Verification Complete</p>
+          <p><strong>Timestamp:</strong> {timestamp}</p>
+          <div className="mt-4">
+            <QRCodeSVG value={`https://etchrona.com/result?hash=${hash}`} />
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
