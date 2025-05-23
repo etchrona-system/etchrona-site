@@ -1,6 +1,9 @@
 "use client";
-import React, { useState } from "react";
-import { QRCodeSVG } from "qrcode.react";
+
+import { useState } from "react";
+import QRCode from "react-qr-code";
+import sha256 from "crypto-js/sha256";
+import encHex from "crypto-js/enc-hex";
 
 export default function SingleImageVerificationPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -14,30 +17,27 @@ export default function SingleImageVerificationPage() {
   const [timestamp, setTimestamp] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const fileList = e.target.files;
-    if (!fileList || fileList.length === 0) return;
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    const selectedFile = fileList[0];
-    setFile(selectedFile);
-    setOriginalFilename(selectedFile.name);
-
-    const buffer = await selectedFile.arrayBuffer();
-    const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-    setHash(hashHex);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const wordArray = sha256(reader.result as string);
+      const hash = wordArray.toString(encHex);
+      setHash(hash);
+      setOriginalFilename(file.name);
+      setFile(file);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = () => {
-    const confirm = window.confirm("You are about to seal the semantic record and authorization code. Once submitted, it cannot be modified and is only for future verification.");
-    if (!confirm) return;
-
+    if (!file) return;
     const now = new Date().toISOString();
     setTimestamp(now);
     setSubmitted(true);
 
-    // NOTE: This data should be written to backend (verify.json)
     console.log({
       hash,
       originalFilename,
@@ -51,11 +51,7 @@ export default function SingleImageVerificationPage() {
   };
 
   const handleQRDownload = () => {
-    const svg = document.getElementById("qrCode");
-    if (!svg || !(svg instanceof SVGSVGElement)) {
-      console.error("QRCode SVG not found or invalid.");
-      return;
-    }
+    const svg = document.getElementById("qrCode") as SVGSVGElement;
     const svgData = new XMLSerializer().serializeToString(svg);
     const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
     const url = URL.createObjectURL(svgBlob);
@@ -66,62 +62,93 @@ export default function SingleImageVerificationPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
-      <h2 className="text-2xl font-bold text-gray-800">Etchrona - Single Image Semantic Sealing</h2>
+    <div className="max-w-3xl mx-auto p-6 space-y-6">
+      <h2 className="text-3xl font-bold text-center">
+        Etchrona - Single Image Semantic Sealing
+      </h2>
 
-      <div className="space-y-2">
-        <label className="block font-medium text-gray-700">Upload Image</label>
-        <input type="file" accept="image/*" onChange={handleFileChange} className="w-full border border-gray-300 p-2 rounded" />
-      </div>
+      <input
+        type="file"
+        onChange={handleFileChange}
+        className="block w-full border p-2 rounded"
+      />
 
-      {hash && (
-        <div className="bg-gray-100 p-4 rounded shadow-sm">
+      {originalFilename && (
+        <div className="text-sm space-y-1">
           <p><strong>Original Filename:</strong> {originalFilename}</p>
           <p><strong>SHA-256 Hash:</strong> {hash}</p>
         </div>
       )}
 
-      <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">User ID (Anonymous or Real Name)</label>
-          <input type="text" value={userId} onChange={(e) => setUserId(e.target.value)} placeholder="e.g., anonymous123 or RealName" className="w-full border border-gray-300 p-2 rounded" />
-        </div>
+      <input
+        type="text"
+        value={customFilename}
+        onChange={(e) => setCustomFilename(e.target.value)}
+        placeholder="Optional Custom Filename"
+        className="w-full border p-2 rounded"
+      />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Custom Filename (optional)</label>
-          <input type="text" value={customFilename} onChange={(e) => setCustomFilename(e.target.value)} placeholder="Optional custom name..." className="w-full border border-gray-300 p-2 rounded" />
-        </div>
+      <input
+        type="text"
+        value={purpose}
+        onChange={(e) => setPurpose(e.target.value)}
+        placeholder="Usage Purpose"
+        className="w-full border p-2 rounded"
+      />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Usage Purpose</label>
-          <textarea value={purpose} onChange={(e) => setPurpose(e.target.value)} className="w-full border border-gray-300 p-2 rounded" placeholder="e.g., AI test data, illustration asset..." />
-        </div>
+      <input
+        type="text"
+        value={method}
+        onChange={(e) => setMethod(e.target.value)}
+        placeholder="Creation Method"
+        className="w-full border p-2 rounded"
+      />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Creation Method</label>
-          <textarea value={method} onChange={(e) => setMethod(e.target.value)} className="w-full border border-gray-300 p-2 rounded" placeholder="e.g., Generated by DALL·E, Midjourney, or Photoshop" />
-        </div>
+      <input
+        type="text"
+        value={authCode}
+        onChange={(e) => setAuthCode(e.target.value)}
+        placeholder="Authorization Code"
+        className="w-full border p-2 rounded"
+      />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Authorization Code</label>
-          <input type="text" value={authCode} onChange={(e) => setAuthCode(e.target.value)} placeholder="e.g., 9XCB7FA" className="w-full border border-gray-300 p-2 rounded" />
-        </div>
+      <input
+        type="text"
+        value={userId}
+        onChange={(e) => setUserId(e.target.value)}
+        placeholder="User ID (Anonymous or Public)"
+        className="w-full border p-2 rounded"
+      />
 
-        <div className="text-center">
-          <button type="submit" className="px-6 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700">Confirm and Submit</button>
-        </div>
-      </form>
+      <div className="text-center">
+        <button
+          onClick={handleSubmit}
+          className="px-6 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700"
+        >
+          Confirm and Submit
+        </button>
+      </div>
 
       {submitted && (
-        <div className="mt-6 bg-green-50 border border-green-300 rounded text-center space-y-3 p-4">
-          <p className="font-semibold text-green-700">✅ Verification Complete</p>
-          <p className="text-sm"><strong>Timestamp:</strong> {timestamp}</p>
-          <p className="text-sm"><strong>Submitted by:</strong> {userId || "Anonymous"}</p>
-          <div className="mt-4 flex flex-col items-center">
-            <QRCodeSVG id="qrCode" value={`https://etchrona.com/result?hash=${hash}`} />
-            <p className="text-xs mt-2 text-gray-500">Scan to verify on Etchrona</p>
-            <button onClick={handleQRDownload} className="mt-2 px-4 py-1 bg-gray-700 text-white rounded hover:bg-gray-800 text-sm">Download QR Code</button>
+        <div className="text-center space-y-3">
+          <p className="text-green-600 font-medium">✅ Verification Complete</p>
+          <p><strong>Timestamp:</strong> {timestamp}</p>
+          <p><strong>Submitted by:</strong> {userId || "Anonymous"}</p>
+
+          <div className="inline-block bg-white p-2">
+            <QRCode id="qrCode" value={`https://etchrona.site/result/${hash}`} size={160} />
           </div>
+
+          <div>
+            <button
+              onClick={handleQRDownload}
+              className="mt-2 px-4 py-1 bg-gray-700 text-white rounded hover:bg-gray-800"
+            >
+              ⬇️ Download QR Code
+            </button>
+          </div>
+
+          <p className="text-xs text-gray-500">Scan to verify on Etchrona</p>
         </div>
       )}
     </div>
